@@ -1,9 +1,9 @@
-function addChange(editor, from, to, text) {
+function addChange(editor, from, to, text, origin) {
   let adjust = editor.listSelections().findIndex(({ anchor, head }) => {
     return CodeMirror.cmpPos(anchor, head) == 0 && CodeMirror.cmpPos(anchor, from) == 0;
   });
   editor.operation(() => {
-    editor.replaceRange(text, from, to, 'yorkie');
+    editor.replaceRange(text, from, to, origin);
     if (adjust > -1) {
       let range = editor.listSelections()[adjust];
       if (range && CodeMirror.cmpPos(range.head, CodeMirror.changeEnd({ from, to, text })) == 0) {
@@ -57,8 +57,8 @@ async function main() {
       }
       const from = editor.posFromIndex(change.from);
       const to = editor.posFromIndex(change.to);
-      addChange(editor, from, to, change.content || '');
-      editor.replaceRange(change.content, from, to, 'yorkie');
+      addChange(editor, from, to, change.content || '', 'yorkie');
+      // editor.replaceRange(change.content, from, to, 'yorkie');
     }
   });
   // 새로고침 시 값 전송
